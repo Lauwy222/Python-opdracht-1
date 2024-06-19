@@ -1,50 +1,41 @@
-class Werknemer():
-    def __init__(self, WerknemerNr, Loon):
-        self.WerknemerNr = WerknemerNr
-        self.Loon = Loon
-        self.verdiend = 0.0
+class Werknemer:
+    def __init__(self, registratienummer):
+        self.registratienummer = registratienummer
 
-    def geefnummer(self):
-        return self.WerknemerNr
+    def printverdiend(self, maand):
+        raise NotImplementedError("Deze methode moet worden overschreven door subclasses")
 
-    def geefverdiensten(self):
-        return self.verdiend
-
-    def printverdiend(self):
-        print(f'werknemer: {self.geefnummer()} verdient: {self.geefverdiensten(): 8.2f} Euro')
 
 class Freelancer(Werknemer):
-    def __init__(self, WerknemerNr, Loon):
-        Werknemer.__init__(self, WerknemerNr, Loon)
-    def werkuren(self, uren):
-        self.verdiend = self.Loon * uren
+    def __init__(self, registratienummer, uurloon, uren_per_maand):
+        super().__init__(registratienummer)
+        self.uurloon = uurloon
+        self.uren_per_maand = uren_per_maand
+
+    def printverdiend(self, maand):
+        verdiend = self.uurloon * self.uren_per_maand[maand - 1]
+        print(f"Werknemer: {self.registratienummer} verdient: {verdiend:.2f} Euro.")
+
 
 class VasteKracht(Werknemer):
-    def __init__(self, WerknemerNr, Loon):
-        Werknemer.__init__(self, WerknemerNr, Loon)
-        self.omzetten()
+    def __init__(self, registratienummer, maandloon):
+        super().__init__(registratienummer)
+        self.maandloon = maandloon
 
-    def omzetten(self):
-        self.verdiend = self.Loon
+    def printverdiend(self, maand):
+        print(f"Werknemer: {self.registratienummer} verdient: {self.maandloon:.2f} Euro.")
 
-class Stukwerker(Werknemer):
-    def __init__(self, WerknemerNr, Loon):
-        Werknemer.__init__(self, WerknemerNr, Loon)
-    def produceerstuks(self, stuks):
-        self.verdiend = self.Loon * stuks
 
-f = Freelancer(1, 25.75)  # werknemer 1 verdient 25.75 per uur
-v = VasteKracht(2, 1873.53)  # werknemer 2 verdient (deze maand) 84 uur
-s = Stukwerker(3, 1.05)
-f.werkuren(84)
-s.produceerstuks(1687)
-print('Maand 1:')
-f.printverdiend()
-v.printverdiend()
-s.printverdiend()
-f.werkuren(13.5)
-s.produceerstuks(0)
-print('Maand 2:')
-f.printverdiend()
-v.printverdiend()
-s.printverdiend()
+# Testprogramma voor Opdracht 1a
+uren_per_maand_freelancer = [43.26, 6.95]  # Voorbeeld uren voor de eerste en tweede maand
+maandloon_vastekracht = 1873.53
+
+werknemers = [
+    Freelancer(registratienummer=1, uurloon=50, uren_per_maand=uren_per_maand_freelancer),
+    VasteKracht(registratienummer=2, maandloon=maandloon_vastekracht)
+]
+
+for maand in range(1, 3):  # Voor de eerste en tweede maand
+    print(f"Maand {maand}:")
+    for werknemer in werknemers:
+        werknemer.printverdiend(maand)
